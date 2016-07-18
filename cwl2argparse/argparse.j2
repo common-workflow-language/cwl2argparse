@@ -6,11 +6,12 @@ description="""
 parser = argparse.ArgumentParser(description=description)
 {% for arg in args %}
 {{ arg.dest }} = parser.add_argument("{{ arg.option_string }}",
-                        {% if arg.type %}type={{ arg.type }},{% endif %}
-                        {% if arg.default %}default={{ arg.default }},{% endif %}
-                        {% if arg.choices %}choices={{ arg.choices }},{% endif %}
-                        {% if arg.nargs %}nargs="{{ arg.nargs }}",{% endif %}
-                        {% if arg.action %}action="{{ arg.action }}",{% endif %}
-                        {% if arg.help %}help="""{{ arg.help }}""",{% endif %})
+                        {% if arg.type %} type={{ arg.type }},{% endif %}
+                        {% if arg.default %} default={{ arg.default }},{% endif %}
+                        {% if arg.choices %} choices={{ arg.choices }},{% endif %}
+                        {% if arg.nargs %} nargs="{{ arg.nargs }}",{% endif %}
+                        {% if arg.action %} action="{{ arg.action }}",{% endif %}
+                        {% if arg.help %} help="""{{ arg.help }}""",{% endif %})
 {% endfor %}
+
 args = parser.parse_args()

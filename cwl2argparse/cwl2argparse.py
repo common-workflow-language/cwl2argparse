@@ -21,6 +21,9 @@ class Argument:
         self.action = Argument._get_actions(arg)
         self.type = Argument._get_type(arg)
         self.nargs = Argument._get_nargs(arg)
+        self.choices = Argument._get_choices(arg)
+        if self.action:
+            self.type = self.default = None
     
     @staticmethod
     def _get_dest(arg):
@@ -41,7 +44,7 @@ class Argument:
                     else:
                         return '--' + name
                 else:
-                    return '--' + arg.id
+                    return '--' + arg.id.strip(string.punctuation)
         else:
             return Argument._get_dest(arg)
     
@@ -55,6 +58,7 @@ class Argument:
             'float': 'float',
             'array': 'list',
             'File': 'argparse.FileType()',
+            'enum': None,
         }
         arg_type = CWL_TO_PY_TYPES[arg.get_type()]
         if arg_type is list and type(arg_type) is list:
@@ -64,9 +68,11 @@ class Argument:
 
     @staticmethod
     def _get_choices(arg):
-        if arg.get_type == 'enum':
-            # TODO
-            return arg.symbols
+        if arg.get_type() == 'enum':
+            if type(arg.type) is list and arg.type[0] == 'null':
+                return arg.type[1]['symbols']
+            elif type(arg.type) is dict:
+                return arg.type['symbols']
 
     @staticmethod
     def _get_default(arg):
@@ -79,7 +85,7 @@ class Argument:
 
     @staticmethod
     def _get_actions(arg):
-        if arg.optional and arg.type == 'boolean':
+        if arg.optional and arg.get_type() == 'boolean':
             return 'store_true'
     
     @staticmethod
