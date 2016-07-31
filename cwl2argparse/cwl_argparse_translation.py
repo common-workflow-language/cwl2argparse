@@ -8,7 +8,7 @@ from yaml import scanner
 from jinja2 import Environment
 from jinja2.loaders import FileSystemLoader
 
-from cwl_classes import Tool
+from cwl2argparse.cwl_classes import Tool
 
 argument_names = []
 

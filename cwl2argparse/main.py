@@ -3,7 +3,7 @@ import os
 import argparse as ap
 import sys
 
-from cwl2argparse import cwl2argparse
+from cwl2argparse.cwl_argparse_translation import cwl2argparse
 
 
 def main():
