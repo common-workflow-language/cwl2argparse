@@ -1,6 +1,5 @@
 import re
 
-import argparse
 import os
 import string
 
@@ -11,12 +10,14 @@ from jinja2.loaders import FileSystemLoader
 
 from cwl_classes import Tool
 
+argument_names = []
+
 
 class Argument:
     def __init__(self, arg):
         self.dest = Argument._get_dest(arg)
         self.help = arg.description
-        self.option_string = Argument._get_option_string(arg)
+        self.option_string = Argument._check_conflicting_prefixes(Argument._get_option_string(arg))
         self.default = Argument._get_default(arg)
         self.action = Argument._get_actions(arg)
         self.type = Argument._get_type(arg)
@@ -36,7 +37,6 @@ class Argument:
     def _get_option_string(arg):
         if arg.optional:
             if hasattr(arg, 'input_binding'):
-                # TODO: handle conflicting prefixes
                 if arg.input_binding.prefix:
                     name = arg.input_binding.prefix.strip(string.punctuation)
                     if len(name) == 1:
@@ -47,7 +47,21 @@ class Argument:
                     return '--' + arg.id.strip(string.punctuation)
         else:
             return Argument._get_dest(arg)
-    
+
+    @staticmethod
+    def _check_conflicting_prefixes(name):
+        global argument_names
+        if name in argument_names:
+            # if the name already exists, add '_N' to it, where N is an order number of this name
+            # example: if argument 'foo' already exists, an argument 'foo_1' is created
+            # if 'foo_1' exists, 'foo_2' is created
+            same_names = list(filter(lambda x: x.startswith(name), argument_names))
+            return name + '_{0}'.format(len(same_names))
+        else:
+            argument_names.append(name)
+            return name
+
+
     @staticmethod
     def _get_type(arg):
         CWL_TO_PY_TYPES = {
@@ -96,7 +110,6 @@ class Argument:
            else:
                 return '+'
 
-    
 
 def cwl2argparse(file, dest, prefix=None):
     if not file.endswith('.cwl'):
@@ -117,7 +130,8 @@ def cwl2argparse(file, dest, prefix=None):
                       trim_blocks=True,
                       lstrip_blocks=True)
     template = env.get_template('argparse.j2')
-    result = template.render(tool=tool, args=args)
+    function_name = file.split('/')[-1].replace('.cwl', '').replace('-', '_')
+    result = template.render(tool=tool, args=args, function_name=function_name)
     filename = file.split('/')[-1].replace('.cwl', '.py')
     with open(os.path.join(dest, filename), 'w') as f:
         f.write(result)
