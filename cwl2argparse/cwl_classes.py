@@ -34,7 +34,7 @@ class InputParam(Param):
         items_type = param.get('items_type', None)
         if items_type:
             self.items_type = items_type
-        self.description = param.get('description', None)
+        self.description = param.get('doc', param.get('description', None))
         self.default = param.get('default', None)
         input_binding = param.get('inputBinding', None)
         if input_binding:

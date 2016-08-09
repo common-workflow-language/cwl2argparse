@@ -73,6 +73,8 @@ class Argument:
             'float': 'float',
             'array': 'list',
             'File': 'argparse.FileType()',
+            'stdout': 'argparse.FileType()',
+            'stderr': 'argparse.FileType()',
             'enum': None,
         }
         arg_type = CWL_TO_PY_TYPES[arg.get_type()]
