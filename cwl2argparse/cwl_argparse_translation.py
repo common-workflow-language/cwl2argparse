@@ -3,6 +3,7 @@ import re
 import os
 import string
 
+import sys
 import yaml
 from yaml import scanner
 from jinja2 import Environment
@@ -113,13 +114,11 @@ class Argument:
 
 def cwl2argparse(file, dest, prefix=None):
     if not file.endswith('.cwl'):
-        print('{0} is not a CWL tool definition'.format(file))
-        return None
+        sys.exit('{0} is not a CWL tool definition'.format(file))
     try:
         tool = Tool(file)
     except yaml.scanner.ScannerError:
-        print('File {0} is corrupted or not a CWL tool definition')
-        return None
+        sys.exit('File {0} is corrupted or not a CWL tool definition')
     args = []
     tool.inputs.update(tool.outputs)
     for arg in tool.inputs.values():

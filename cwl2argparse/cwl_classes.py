@@ -1,3 +1,4 @@
+import sys
 from yaml import load
 from collections import OrderedDict
 
@@ -66,10 +67,16 @@ class Tool:
 
         with open(filename) as f:
             tool = load(f)
-        self.tool_class = tool['class']
+        try:
+            self.tool_class = tool['class']
+        except KeyError:
+            sys.exit('`class` attribute of the CWL document not found')
         if self.tool_class != 'CommandLineTool':
             raise ValueError('Wrong tool class')
-        self.basecommand = tool['baseCommand']
+        try:
+            self.basecommand = tool['baseCommand']
+        except KeyError:
+            sys.exit('`baseCommand` attribute of the CWL document not found')
         self.inputs = OrderedDict()
         if type(tool['inputs']) is list:  # ids not mapped
             for param_dict in tool['inputs']:
