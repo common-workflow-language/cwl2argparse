@@ -112,7 +112,7 @@ class Argument:
                 return '+'
 
 
-def cwl2argparse(file, dest, prefix=None):
+def cwl2argparse(file, dest, quiet=False, prefix=None):
     if not file.endswith('.cwl'):
         sys.exit('{0} is not a CWL tool definition'.format(file))
     try:
@@ -134,5 +134,6 @@ def cwl2argparse(file, dest, prefix=None):
     filename = file.split('/')[-1].replace('.cwl', '.py')
     with open(os.path.join(dest, filename), 'w') as f:
         f.write(result)
-    print(filename)
-    print(result)
+    if quiet is False:
+        print(filename)
+        print(result)
