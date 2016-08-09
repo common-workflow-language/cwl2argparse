@@ -112,7 +112,12 @@ class Argument:
                 return '+'
 
 
-def cwl2argparse(file, dest, quiet=False, prefix=None):
+def write_code_to_file(filepath, code):
+    with open(filepath, 'w') as f:
+        f.write(code)
+
+
+def cwl2argparse(file, dest, quiet=False, no_confirm=False, prefix=None):
     if not file.endswith('.cwl'):
         sys.exit('{0} is not a CWL tool definition'.format(file))
     try:
@@ -132,8 +137,15 @@ def cwl2argparse(file, dest, quiet=False, prefix=None):
     function_name = file.split('/')[-1].replace('.cwl', '').replace('-', '_')
     result = template.render(tool=tool, args=args, function_name=function_name)
     filename = file.split('/')[-1].replace('.cwl', '.py')
-    with open(os.path.join(dest, filename), 'w') as f:
-        f.write(result)
+    filepath = os.path.join(dest, filename)
+    if no_confirm is False and os.path.exists(filepath):
+        override = input('Filepath {0} already exists, override existing file? y/n '.format(filepath))
+        if override in {'y', 'Y'}:
+            write_code_to_file(filepath, result)
+        else:
+            print('File not overridden')
+    else:
+        write_code_to_file(filepath, result)
     if quiet is False:
         print(filename)
         print(result)
