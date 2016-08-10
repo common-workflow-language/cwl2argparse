@@ -32,7 +32,7 @@ Result
     import argparse
     
     
-    def search():
+    def parser():
         description="""
             Toy program to search inverted index and print out each line the term appears
         """
@@ -68,3 +68,5 @@ For instance, providing `arg_` as a prefix will result in generating the next li
   
   
 * `-d`, `--dest` - Destination directory to store resulting .py files
+* `-q`, `--quiet` - Do not print generated code to system output
+* `-y` - If a file with a name the same as the generated one already exists, replace it without confirmation
