@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name="cwl2argparse",
-      version="0.1.6",
+      version="0.1.7",
       description='Generating Python code from CWL tool descriptions with CWL inputs/outputs as argparse arguments',
       author='Anton Khodak',
       author_email='anton.khodak@ukr.net',

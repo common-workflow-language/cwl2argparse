@@ -27,13 +27,15 @@ class InputParam(Param):
     def __init__(self, param):
         self.id = param['id']
         self.type = param.get('type', None)
-        if type(self.type) is list and self.type[0] == 'null':
+        if type(self.type) is str and self.type[-2:] == '[]': # v.1.0 syntax simplification ('<type>[]' == array of <type> )
+            self.type = "array"
+        if (type(self.type) is list and self.type[0] == 'null'):
             self.optional = True
+        elif type(self.type) is str and self.type[-1] == '?':  # v.1.0 ('<type>?' == ['null', '<type>'])
+            self.optional = True
+            self.type = self.type[:-1]
         else:
             self.optional = False
-        items_type = param.get('items_type', None)
-        if items_type:
-            self.items_type = items_type
         self.description = param.get('doc', param.get('description', None))
         self.default = param.get('default', None)
         input_binding = param.get('inputBinding', None)
@@ -98,5 +100,5 @@ class Tool:
                     param_dict['id'] = id
                     param = OutputParam(param_dict)
                     self.outputs[id] = param
-        self.description = tool.get('description', '')
+        self.description = tool.get('doc', tool.get('description', None))
         self.cwl_version = tool.get('cwlVersion', '')
