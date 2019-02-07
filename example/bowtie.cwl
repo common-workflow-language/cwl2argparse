@@ -779,7 +779,7 @@ schema:mainEntity:
 
   schema:publication:
   - class: schema:ScholarlyArticle
-    id: http://dx.doi.org/10.1186/gb-2009-10-3-r25
+    id: https://doi.org/10.1186/gb-2009-10-3-r25
 
 schema:isPartOf:
   class: schema:CreativeWork
